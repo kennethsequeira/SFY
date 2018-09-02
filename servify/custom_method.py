@@ -117,11 +117,7 @@ def create_sales_b2c():
 									where legacy_invoice_no is not NULL)
 								''',as_dict=1)
 
-	print ("invoices")
-	print invoices
-
 	for invoice in invoices:
-		print invoice
 		si_doc = frappe.new_doc("Sales Invoice")
 		si_doc.company = "Service Lee Technologies Pvt Ltd"
 		si_doc.currency = frappe.db.get_value("Company", si_doc.company, "default_currency")
