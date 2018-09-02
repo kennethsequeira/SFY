@@ -172,5 +172,5 @@ def create_sales_b2c():
 
 		si_doc.set_missing_values()
 		si_doc.flags.ignore_mandatory = True
-		if invoice["sold_plan_id"]:
+		if invoice["plan_id"]:
 			si_doc.insert(ignore_permissions=True)
