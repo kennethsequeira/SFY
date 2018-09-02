@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include servify *.css
+recursive-include servify *.csv
+recursive-include servify *.html
+recursive-include servify *.ico
+recursive-include servify *.js
+recursive-include servify *.json
+recursive-include servify *.md
+recursive-include servify *.png
+recursive-include servify *.py
+recursive-include servify *.svg
+recursive-include servify *.txt
+recursive-exclude servify *.pyc
