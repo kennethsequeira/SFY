@@ -43,7 +43,7 @@
    "search_index": 0, 
    "set_only_once": 0, 
    "translatable": 0, 
-   "unique": 1
+   "unique": 0
   }, 
   {
    "allow_bulk_edit": 0, 
@@ -602,7 +602,7 @@
  "issingle": 0, 
  "istable": 0, 
  "max_attachments": 0, 
- "modified": "2018-09-02 21:34:38.770433", 
+ "modified": "2018-09-03 16:39:37.835497", 
  "modified_by": "Administrator", 
  "module": "Servify", 
  "name": "Billing Details", 
