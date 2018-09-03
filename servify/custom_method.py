@@ -34,7 +34,7 @@ def create_sales_b2b():
 			si_doc.taxes_and_charges = "Out of State GST - SLTPL"
 		if invoice["taxes_and_charges"] in ["In State GST @ 18%","In State GST @ 12%"]:
 			si_doc.taxes_and_charges = "In State GST - SLTPL"
-			
+
 		si_doc.legacy_invoice_no = invoice["name"]
 		invoice_details = frappe.db.sql('''select sold_plan_id, plan_id, 
 										start_date, end_date,
@@ -44,6 +44,13 @@ def create_sales_b2b():
 										as_dict=1)
 		details_exist = False
 		for detail in invoice_details:
+			if detail["base_value"] < 0:
+				qty = -1
+				detail["base_value"] = invoice["base_value"] * -1
+				si_doc.is_return = 1
+			else:
+				qty = 1
+
 			si_doc.append("items", {
 				"item_code": detail["plan_id"],
 				"qty": 1,
@@ -139,9 +146,19 @@ def create_sales_b2c():
 			si_doc.taxes_and_charges = "Out of State GST - SLTPL"
 		si_doc.legacy_invoice_no = invoice["invoice_number"]
 
+		if invoice["base_value"] < 0:
+			qty = -1
+			invoice["base_value"] = invoice["base_value"] * -1
+			invoice["cgst_amount"] = invoice["cgst_amount"] * -1
+			invoice["sgst_amount"] = invoice["sgst_amount"] * -1
+			invoice["igst_amount"] = invoice["igst_amount"] * -1
+			si_doc.is_return = 1
+		else:
+			qty = 1
+
 		si_doc.append("items", {
 			"item_code": invoice["plan_id"],
-			"qty": 1,
+			"qty": qty,
 			"rate": invoice["base_value"],
 			"sfy_sold_plan_id": invoice["sold_plan_id"],
 			"enable_deferred_revenue": 1,
