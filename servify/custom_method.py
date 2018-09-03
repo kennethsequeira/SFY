@@ -53,7 +53,7 @@ def create_sales_b2b():
 
 			si_doc.append("items", {
 				"item_code": detail["plan_id"],
-				"qty": 1,
+				"qty": qty,
 				"rate": detail["base_value"],
 				"sfy_sold_plan_id": detail["sold_plan_id"],
 				"enable_deferred_revenue": 1,
