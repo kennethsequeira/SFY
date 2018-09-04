@@ -191,3 +191,12 @@ def create_sales_b2c():
 		si_doc.flags.ignore_mandatory = True
 		if invoice["plan_id"]:
 			si_doc.insert(ignore_permissions=True)
+
+def submit_si():
+	invoices = frappe.db.sql('''select name
+								from `tabSales Invoice`
+								where status = 0''',as_dict=1)
+
+	for invoice in invoices:
+		si = frappe.get_doc("Sales Invoice", invoice["name"])
+		si.submit()
