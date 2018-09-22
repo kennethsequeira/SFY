@@ -192,6 +192,54 @@ def create_sales_b2c():
 		if invoice["plan_id"]:
 			si_doc.insert(ignore_permissions=True)
 
+def create_jv():
+	jes = frappe.db.sql('''select 
+								distinct legacy_voucher, posting_date 
+						from
+							`tabServify Ledger`
+						order by legacy_voucher, posting_date asc''', as_dict = 1)
+
+	for je in jes:
+		je_doc = frappe.new_doc("Journal Entry")
+		je_doc.company = "Service Lee Technologies Pvt Ltd"
+		je_doc.voucher_type = "Journal Entry"
+		je_doc.cheque_no = je["legacy_voucher"]
+		je_doc.posting_date = je["posting_date"]
+		je_doc.cheque_date = je["posting_date"]
+		print "nos"
+		print je_doc.cheque_no
+		print je_doc.posting_date
+
+		je_details = frappe.db.sql('''select 
+								 			account, debit, credit, party, party_name, 
+											CONCAT(ifnull(reference, " "), "/", ifnull(narration, " "), "/", ifnull(item, " ")) as "remark" 
+									from
+										`tabServify Ledger`
+									where 
+										legacy_voucher = %s and posting_date = %s
+									order by legacy_voucher asc''', (je["legacy_voucher"], je["posting_date"]), as_dict = 1)
+
+		for jed in je_details:
+			if jed["account"][:2] in ["01","02", "03"]:
+				cost_center = "Main - SLTPL"
+			else:
+				cost_center = ""
+
+			je_doc.append("accounts", {
+				"account": jed["account"],
+				"cost_center": cost_center,
+				"party_type": jed["party"],
+				"party": jed["party_name"],
+				"debit_in_account_currency": jed["debit"],
+				"debit":jed["debit"],
+				"credit_in_account_currency":jed["credit"],
+				"credit":jed["credit"],
+				"user_remark": jed["remark"]
+			})
+
+		if je["legacy_voucher"]:
+			je_doc.insert(ignore_permissions=True)
+
 def submit_si():
 	invoices = frappe.db.sql('''select name
 								from `tabSales Invoice`
