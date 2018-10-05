@@ -116,7 +116,7 @@ def create_sales_b2c():
 	invoices = frappe.db.sql('''select sold_plan_id, plan_id, customer_name, customer_address,
 									project, posting_date, invoice_number, reference_payment_order,
 									plan_purchase_date, start_date, end_date, base_value,
-									cgst_amount, sgst_amount, igst_amount, total, sales_invoice
+									cgst_amount, sgst_amount, igst_amount, total, sales_invoice, state_code
 									from `tabBilling Details B2C`
 									where invoice_number not in 
 									(select legacy_invoice_no
@@ -138,6 +138,7 @@ def create_sales_b2c():
 		si_doc.project = invoice["project"]
 		si_doc.company_address = "Service Lee Technologies Pvt Ltd-Billing"
 		si_doc.company_gstin = "27AAVCS8563N1Z4"
+		si_doc.place_of_supply = invoice["state_code"]
 		#logic for this
 		if invoice["cgst_amount"] > 0 or invoice["sgst_amount"] > 0:
 			si_doc.taxes_and_charges = "In State GST - SLTPL"
@@ -206,9 +207,6 @@ def create_jv():
 		je_doc.cheque_no = je["legacy_voucher"]
 		je_doc.posting_date = je["posting_date"]
 		je_doc.cheque_date = je["posting_date"]
-		print "nos"
-		print je_doc.cheque_no
-		print je_doc.posting_date
 
 		je_details = frappe.db.sql('''select 
 								 			account, debit, credit, party, party_name, 
