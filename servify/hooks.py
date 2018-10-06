@@ -90,13 +90,11 @@ app_license = "MIT"
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"servify.tasks.all"
-# 	],
-# 	"daily": [
-# 		"servify.tasks.daily"
-# 	],
+scheduler_events = {
+	"daily": [
+		"servify.custom_method.create_sales_b2c"
+	]
+}
 # 	"hourly": [
 # 		"servify.tasks.hourly"
 # 	],
@@ -106,7 +104,7 @@ app_license = "MIT"
 # 	"monthly": [
 # 		"servify.tasks.monthly"
 # 	]
-# }
+
 
 # Testing
 # -------

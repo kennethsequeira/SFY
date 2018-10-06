@@ -116,7 +116,8 @@ def create_sales_b2c():
 	invoices = frappe.db.sql('''select sold_plan_id, plan_id, customer_name, customer_address,
 									project, posting_date, invoice_number, reference_payment_order,
 									plan_purchase_date, start_date, end_date, base_value,
-									cgst_amount, sgst_amount, igst_amount, total, sales_invoice, state_code
+									cgst_amount, sgst_amount, igst_amount, total, sales_invoice, state_code,
+									customer_gstin
 									from `tabBilling Details B2C`
 									where invoice_number not in 
 									(select legacy_invoice_no
@@ -139,6 +140,7 @@ def create_sales_b2c():
 		si_doc.company_address = "Service Lee Technologies Pvt Ltd-Billing"
 		si_doc.company_gstin = "27AAVCS8563N1Z4"
 		si_doc.place_of_supply = invoice["state_code"]
+		si_doc.customer_gstin = invoice["customer_gstin"]
 		#logic for this
 		if invoice["cgst_amount"] > 0 or invoice["sgst_amount"] > 0:
 			si_doc.taxes_and_charges = "In State GST - SLTPL"
@@ -192,6 +194,13 @@ def create_sales_b2c():
 		si_doc.flags.ignore_mandatory = True
 		if invoice["plan_id"]:
 			si_doc.insert(ignore_permissions=True)
+
+
+		frappe.db.sql('''update `tabSales Invoice` a set a.place_of_supply = (select max(b.state_code)
+																				from `tabBilling Details B2C` b
+																				where b.invoice_number = a.legacy_invoice_no
+																				and b.state_code IS NOT NULL)
+								where a.name = %s''',si_doc.name)
 
 def create_jv():
 	jes = frappe.db.sql('''select 
