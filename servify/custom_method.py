@@ -255,3 +255,30 @@ def submit_si():
 	for invoice in invoices:
 		si = frappe.get_doc("Sales Invoice", invoice["name"])
 		si.submit()
+
+def update_sold_plan_id():
+	prev_name = ""
+
+	sold_plan_ids = frappe.db.sql('''select distinct sitm.name, sp.service_stop_date, sitm.parent, sp.name as "spupd_name"
+										from `tabSold Plan Update` sp, `tabSales Invoice Item` sitm, `tabSales Invoice` si
+										where sp.sales_invoice IS NULL
+										and sp.sold_plan_id = sitm.sold_plan_id
+										and sitm.enable_deferred_revenue = 1
+										and sp.service_stop_date >= sitm.service_start_date
+										and sp.service_stop_date <= sitm.service_end_date
+										and sitm.service_stop_date is NULL
+										and sp.company = si.company
+										and si.docstatus = 1
+										and si.name = sitm.parent''', as_dict=1)
+
+	for sold_plan_id in sold_plan_ids:
+		si_item = frappe.get_doc('Sales Invoice Item', sold_plan_id["name"])
+		si_item.service_stop_date = sold_plan_id["service_stop_date"]
+		si_item.save()
+
+		if sold_plan_id["spupd_name"]:
+			if prev_name != sold_plan_id["spupd_name"]:
+				spupd = frappe.get_doc('Sold Plan Update', sold_plan_id["spupd_name"])
+				spupd.sales_invoice = sold_plan_id["parent"]
+				spupd.save()
+				prev_name = sold_plan_id["spupd_name"]

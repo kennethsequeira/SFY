@@ -1,0 +1,28 @@
+{
+ "add_total_row": 0, 
+ "creation": "2018-10-13 13:47:08.936245", 
+ "disabled": 0, 
+ "docstatus": 0, 
+ "doctype": "Report", 
+ "idx": 0, 
+ "is_standard": "Yes", 
+ "letter_head": "Service Lee Technologies Pvt Ltd", 
+ "modified": "2018-10-13 13:47:08.936245", 
+ "modified_by": "Administrator", 
+ "module": "Servify", 
+ "name": "Uploaded Sold Plan Stop Dates", 
+ "owner": "Administrator", 
+ "prepared_report": 0, 
+ "query": "select distinct sitm.parent as \"Sales Invoice:Link/Sales Invoice:150\", \nsitm.sold_plan_id as \"Sold Plan ID:Data:50\", \nsitm.service_start_date as \"Service Start Date:Date:120\", \nsitm.service_end_date as \"Service End Date:Date:120\", \nsitm.service_stop_date as \"Service Stop Date:Date:120\"\nfrom `tabSales Invoice Item` sitm, `tabSales Invoice` si\nwhere sitm.enable_deferred_revenue = 1\nand si.docstatus = 1\nand si.name = sitm.parent\nand sitm.sold_plan_id in (\nselect sold_plan_id\nfrom `tabSold Plan Update`\n)", 
+ "ref_doctype": "Sales Invoice", 
+ "report_name": "Uploaded Sold Plan Stop Dates", 
+ "report_type": "Query Report", 
+ "roles": [
+  {
+   "role": "Accounts Manager"
+  }, 
+  {
+   "role": "Accounts User"
+  }
+ ]
+}

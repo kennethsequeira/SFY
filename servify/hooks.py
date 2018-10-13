@@ -93,6 +93,9 @@ app_license = "MIT"
 scheduler_events = {
 	"daily": [
 		"servify.custom_method.create_sales_b2c"
+	],
+	"hourly": [
+		"servify.custom_method.update_sold_plan_id"
 	]
 }
 # 	"hourly": [
