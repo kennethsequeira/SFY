@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 import frappe
 import frappe.defaults
 from frappe.utils import cint, flt, add_months, today, date_diff, getdate, add_days, cstr
-sold_plan_id
 def create_sales_b2b():
 	invoices = frappe.db.sql('''select name, posting_date, customer, customer_name,
 		 							customer_address, taxes_and_charges,
