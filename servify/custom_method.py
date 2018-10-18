@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 import frappe
 import frappe.defaults
 from frappe.utils import cint, flt, add_months, today, date_diff, getdate, add_days, cstr
-
+sold_plan_id
 def create_sales_b2b():
 	invoices = frappe.db.sql('''select name, posting_date, customer, customer_name,
 		 							customer_address, taxes_and_charges,
@@ -55,7 +55,7 @@ def create_sales_b2b():
 				"item_code": detail["plan_id"],
 				"qty": qty,
 				"rate": detail["base_value"],
-				"sfy_sold_plan_id": detail["sold_plan_id"],
+				"sold_plan_id": detail["sold_plan_id"],
 				"enable_deferred_revenue": 1,
 				"service_start_date": detail["start_date"],
 				"service_end_date": detail["end_date"]
@@ -163,7 +163,7 @@ def create_sales_b2c():
 			"item_code": invoice["plan_id"],
 			"qty": qty,
 			"rate": invoice["base_value"],
-			"sfy_sold_plan_id": invoice["sold_plan_id"],
+			"sold_plan_id": invoice["sold_plan_id"],
 			"enable_deferred_revenue": 1,
 			"service_start_date": invoice["start_date"],
 			"service_end_date": invoice["end_date"]
