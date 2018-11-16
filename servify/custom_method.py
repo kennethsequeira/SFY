@@ -286,7 +286,7 @@ def update_sold_plan_id():
 
 def validate_unique_sold_plan_id(self, method):
 	for d in self.items:
-		if d.sold_plan_id:
+		if d.sold_plan_id and d.qty > 0:
 			si = frappe.db.sql('''select distinct b.parent
 									from `tabSales Invoice` a, `tabSales Invoice Item` b
 								where
