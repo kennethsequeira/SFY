@@ -77,6 +77,11 @@ app_license = "MIT"
 
 # Document Events
 # ---------------
+doc_events = {
+	"Sales Invoice": {
+		"validate": "servify.custom_method.validate_unique_sold_plan_id"
+		}
+	}
 # Hook on document methods and events
 
 # doc_events = {
@@ -120,4 +125,3 @@ scheduler_events = {
 # override_whitelisted_methods = {
 # 	"frappe.desk.doctype.event.event.get_events": "servify.event.get_events"
 # }
-

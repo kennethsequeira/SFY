@@ -2,6 +2,8 @@ from __future__ import unicode_literals
 import frappe
 import frappe.defaults
 from frappe.utils import cint, flt, add_months, today, date_diff, getdate, add_days, cstr
+from frappe import _
+
 def create_sales_b2b():
 	invoices = frappe.db.sql('''select name, posting_date, customer, customer_name,
 		 							customer_address, taxes_and_charges,
@@ -281,3 +283,21 @@ def update_sold_plan_id():
 				spupd.sales_invoice = sold_plan_id["parent"]
 				spupd.save()
 				prev_name = sold_plan_id["spupd_name"]
+
+def validate_unique_sold_plan_id(self, method):
+	for d in self.items:
+		if d.sold_plan_id:
+			si = frappe.db.sql('''select distinct b.parent
+									from `tabSales Invoice` a, `tabSales Invoice Item` b
+								where
+									a.name = b.parent
+									and b.sold_plan_id = %(sold_plan_id)s
+									and a.name != %(parent)s
+									and a.is_return = 0
+									and a.docstatus < 2''', {
+										"sold_plan_id": d.sold_plan_id,
+										"parent": d.parent
+									})
+			if si:
+				si = si[0][0]
+				frappe.throw(_("Sold Plan ID {0} already exists in Sales Invoice {1}".format(d.sold_plan_id, si)))
