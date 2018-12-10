@@ -172,13 +172,13 @@ def create_sales_b2c():
 		if invoice["cgst_amount"] > 0 or invoice["sgst_amount"] > 0:
 			si_doc.append("taxes", {
 				"charge_type": "On Net Total",
-				"account_head": "SGST - SLTPL",
+				"account_head": "05010012 - Output SGST - SLTPL",
 				"description": "SGST @ 9%",
 				"rate": 9
 			})
 			si_doc.append("taxes", {
 				"charge_type": "On Net Total",
-				"account_head": "CGST - SLTPL",
+				"account_head": "05010011 - Output CGST - SLTPL",
 				"description": "CGST @ 9%",
 				"rate": 9
 			})
@@ -186,7 +186,7 @@ def create_sales_b2c():
 		if invoice["igst_amount"] > 0:
 			si_doc.append("taxes", {
 				"charge_type": "On Net Total",
-				"account_head": "IGST - SLTPL",
+				"account_head": "05010010 - Output IGST - SLTPL",
 				"description": "IGST @ 18%",
 				"rate": 18
 			})

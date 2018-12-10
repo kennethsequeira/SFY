@@ -96,7 +96,7 @@ doc_events = {
 # ---------------
 
 scheduler_events = {
-	"daily": [
+	"hourly": [
 		"servify.custom_method.create_sales_b2c"
 	],
 	"hourly": [
