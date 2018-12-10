@@ -193,8 +193,13 @@ def create_sales_b2c():
 
 		si_doc.set_missing_values()
 		si_doc.flags.ignore_mandatory = True
-		if invoice["plan_id"]:
-			si_doc.insert(ignore_permissions=True)
+
+		try:
+			if invoice["plan_id"]:
+				si_doc.insert(ignore_permissions=True)
+
+		except Exception as e:
+			frappe.log_error(message=e, title="Create Sales Invoice")
 
 
 		frappe.db.sql('''update `tabSales Invoice` a set a.place_of_supply = (select max(b.state_code)
