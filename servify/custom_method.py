@@ -115,7 +115,7 @@ def create_sales_b2b():
 
 def create_sales_b2c():
 	invoices = frappe.db.sql('''select sold_plan_id, plan_id, customer_name, customer_address,
-									project, posting_date, invoice_number, 	,
+									project, posting_date, invoice_number,
 									plan_purchase_date, start_date, end_date, base_value,
 									cgst_amount, sgst_amount, igst_amount, total, sales_invoice, state_code,
 									customer_gstin, reference_payment_order
