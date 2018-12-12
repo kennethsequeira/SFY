@@ -142,6 +142,7 @@ def create_sales_b2c():
 		si_doc.company_gstin = "27AAVCS8563N1Z4"
 		si_doc.place_of_supply = invoice["state_code"]
 		si_doc.customer_gstin = invoice["customer_gstin"]
+		si_doc.reference_payment_order = invoice["reference_payment_order"]
 		#logic for this
 		if invoice["cgst_amount"] > 0 or invoice["sgst_amount"] > 0:
 			si_doc.taxes_and_charges = "In State GST - SLTPL"
