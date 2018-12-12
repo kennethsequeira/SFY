@@ -291,6 +291,8 @@ def update_sold_plan_id():
 				prev_name = sold_plan_id["spupd_name"]
 
 def validate_unique_sold_plan_id(self, method):
+	#default letter head for Sales Invoice
+	self.letter_head = "Service Lee Technologies Pvt Ltd"
 	for d in self.items:
 		if d.sold_plan_id and d.qty > 0:
 			si = frappe.db.sql('''select distinct b.parent
