@@ -18,5 +18,6 @@ class BillingDetailsB2C(Document):
 											where sold_plan_id = %s
 											and base_value > 0
 										''', self.sold_plan_id, as_dict=1)
-			if invoices["sold_plan_id"]:
-				frappe.throw(_("Sold Plan ID {0} already exists".format(invoices["sold_plan_id"])))
+			for invoice in invoices:
+				if invoice["sold_plan_id"]:
+					frappe.throw(_("Sold Plan ID {0} already exists".format(invoice["sold_plan_id"])))
