@@ -118,7 +118,8 @@ def create_sales_b2c():
 									project, posting_date, invoice_number,
 									plan_purchase_date, start_date, end_date, base_value,
 									cgst_amount, sgst_amount, igst_amount, total, sales_invoice, state_code,
-									customer_gstin, reference_payment_order, cost_center, service_request_id
+									customer_gstin, reference_payment_order, cost_center, service_request_id,
+									is_deferred
 									from `tabBilling Details B2C`
 									where invoice_number not in 
 									(select legacy_invoice_no
@@ -160,19 +161,30 @@ def create_sales_b2c():
 			si_doc.is_return = 1
 		else:
 			qty = 1
+		if invoice["is_deferred"]:
+			si_doc.append("items", {
+				"item_code": invoice["plan_id"],
+				"qty": qty,
+				"rate": invoice["base_value"],
+				"sold_plan_id": invoice["sold_plan_id"],
+				"enable_deferred_revenue": 1,
+				"service_start_date": invoice["start_date"],
+				"service_end_date": invoice["end_date"],
+				"reference_payment_order": invoice["reference_payment_order"],
+				"cost_center": invoice["cost_center"],
+				"service_request_id": invoice["service_request_id"]
+			})
+		else:
+			si_doc.append("items", {
+				"item_code": invoice["plan_id"],
+				"qty": qty,
+				"rate": invoice["base_value"],
+				"sold_plan_id": invoice["sold_plan_id"],
+				"reference_payment_order": invoice["reference_payment_order"],
+				"cost_center": invoice["cost_center"],
+				"service_request_id": invoice["service_request_id"]
+			})
 
-		si_doc.append("items", {
-			"item_code": invoice["plan_id"],
-			"qty": qty,
-			"rate": invoice["base_value"],
-			"sold_plan_id": invoice["sold_plan_id"],
-			"enable_deferred_revenue": 1,
-			"service_start_date": invoice["start_date"],
-			"service_end_date": invoice["end_date"],
-			"reference_payment_order": invoice["reference_payment_order"],
-			"cost_center": invoice["cost_center"],
-			"service_request_id": invoice["service_request_id"]
-		})
 		if invoice["cgst_amount"] > 0 or invoice["sgst_amount"] > 0:
 			si_doc.append("taxes", {
 				"charge_type": "On Net Total",
