@@ -11,3 +11,13 @@ class BillingDetailsB2C(Document):
 	def validate(self):
 		if self.is_deferred and not (self.start_date and self.end_date):
 			frappe.throw(_("Start Date and End Date is required for deferred processing"))
+
+		if self.base_value > 0 and self.sold_plan_id:
+			invoices = frappe.db.sql('''select sold_plan_id
+											from `tabBilling Details B2C`
+											where sold_plan_id = %s
+											and base_value > 0
+										''', self.sold_plan_id, as_dict=1)
+			if invoices["sold_plan_id"]:
+				frappe.throw(_("Sold Plan ID already exists"))
+				frappe.throw(_("Sold Plan ID {0} already exists".format(invoices["sold_plan_id"]))
