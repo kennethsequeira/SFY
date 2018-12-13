@@ -155,9 +155,6 @@ def create_sales_b2c():
 		if invoice["base_value"] < 0:
 			qty = -1
 			invoice["base_value"] = invoice["base_value"] * -1
-			invoice["cgst_amount"] = invoice["cgst_amount"] * -1
-			invoice["sgst_amount"] = invoice["sgst_amount"] * -1
-			invoice["igst_amount"] = invoice["igst_amount"] * -1
 			si_doc.is_return = 1
 		else:
 			qty = 1
@@ -185,7 +182,7 @@ def create_sales_b2c():
 				"service_request_id": invoice["service_request_id"]
 			})
 
-		if invoice["cgst_amount"] > 0 or invoice["sgst_amount"] > 0:
+		if invoice["cgst_amount"] > 0 or invoice["sgst_amount"] > 0 or invoice["cgst_amount"] < 0 or invoice["sgst_amount"] < 0:
 			si_doc.append("taxes", {
 				"charge_type": "Actual",
 				"account_head": "05010012 - Output SGST - SLTPL",
@@ -199,7 +196,7 @@ def create_sales_b2c():
 				"tax_amount": invoice["cgst_amount"]
 			})
 
-		if invoice["igst_amount"] > 0:
+		if invoice["igst_amount"] > 0 or invoice["igst_amount"] < 0:
 			si_doc.append("taxes", {
 				"charge_type": "Actual",
 				"account_head": "05010010 - Output IGST - SLTPL",
@@ -222,6 +219,13 @@ def create_sales_b2c():
 																				from `tabBilling Details B2C` b
 																				where b.invoice_number = a.legacy_invoice_no
 																				and b.state_code IS NOT NULL)
+								where a.name = %s''',si_doc.name)
+
+		frappe.db.sql('''update `tabSales Invoice` a set a.place_of_supply = (select max(b.state_code)
+																				from `tabBilling Details B2C` b
+																				where b.reference_payment_order = a.reference_payment_order
+																				and b.state_code IS NOT NULL
+																				and b.invoice_number IS NULL)
 								where a.name = %s''',si_doc.name)
 
 def create_jv():
