@@ -21,3 +21,8 @@ class BillingDetailsB2C(Document):
 			for invoice in invoices:
 				if invoice["sold_plan_id"]:
 					frappe.throw(_("Sold Plan ID {0} already exists".format(invoice["sold_plan_id"])))
+
+		if self.reference_payment_order or self.invoice_number:
+			pass
+		else:
+			frappe.throw(_("Invoice Number or Reference Payment Order is mandatory to upload transactions."))
