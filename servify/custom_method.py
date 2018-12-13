@@ -121,10 +121,25 @@ def create_sales_b2c():
 									customer_gstin, reference_payment_order, cost_center, service_request_id,
 									is_deferred
 									from `tabBilling Details B2C`
-									where invoice_number not in 
+									where invoice_number is NOT NULL
+									and invoice_number not in 
 									(select legacy_invoice_no
 									from `tabSales Invoice` 
 									where legacy_invoice_no is not NULL)
+								union
+								select sold_plan_id, plan_id, customer_name, customer_address,
+									project, posting_date, invoice_number,
+									plan_purchase_date, start_date, end_date, base_value,
+									cgst_amount, sgst_amount, igst_amount, total, sales_invoice, state_code,
+									customer_gstin, reference_payment_order, cost_center, service_request_id,
+									is_deferred
+									from `tabBilling Details B2C`
+									where invoice_number is NULL
+									and reference_payment_order is NOT NULL
+									and reference_payment_order not in 
+									(select reference_payment_order
+									from `tabSales Invoice` 
+									where reference_payment_order is not NULL)
 								''',as_dict=1)
 
 	for invoice in invoices:
