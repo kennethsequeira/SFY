@@ -119,27 +119,12 @@ def create_sales_b2c():
 									plan_purchase_date, start_date, end_date, base_value,
 									cgst_amount, sgst_amount, igst_amount, total, sales_invoice, state_code,
 									customer_gstin, reference_payment_order, cost_center, service_request_id,
-									is_deferred
+									is_deferred, name
 									from `tabBilling Details B2C`
-									where invoice_number is NOT NULL
-									and invoice_number not in 
-									(select legacy_invoice_no
+									where name not in 
+									(select transaction_reference
 									from `tabSales Invoice` 
 									where legacy_invoice_no is not NULL)
-								union
-								select sold_plan_id, plan_id, customer_name, customer_address,
-									project, posting_date, invoice_number,
-									plan_purchase_date, start_date, end_date, base_value,
-									cgst_amount, sgst_amount, igst_amount, total, sales_invoice, state_code,
-									customer_gstin, reference_payment_order, cost_center, service_request_id,
-									is_deferred
-									from `tabBilling Details B2C`
-									where invoice_number is NULL
-									and reference_payment_order is NOT NULL
-									and reference_payment_order not in 
-									(select reference_payment_order
-									from `tabSales Invoice` 
-									where reference_payment_order is not NULL)
 								''',as_dict=1)
 
 	for invoice in invoices:
@@ -159,6 +144,7 @@ def create_sales_b2c():
 		si_doc.place_of_supply = invoice["state_code"]
 		si_doc.customer_gstin = invoice["customer_gstin"]
 		si_doc.reference_payment_order = invoice["reference_payment_order"]
+		si_doc.transaction_reference = invoice["name"]
 		si_doc.naming_series = "SFY/18-19/E.########"
 		#logic for this
 		if invoice["cgst_amount"] > 0 or invoice["sgst_amount"] > 0:
@@ -229,20 +215,13 @@ def create_sales_b2c():
 				si_doc.insert(ignore_permissions=True)
 
 		except Exception as e:
-			frappe.log_error(message=e, title="Create Sales Invoice")
+			frappe.log_error(message=e, title="Create Sales Invoice B2C")
 
 
 		frappe.db.sql('''update `tabSales Invoice` a set a.place_of_supply = (select max(b.state_code)
 																				from `tabBilling Details B2C` b
-																				where b.invoice_number = a.legacy_invoice_no
+																				where b.name = a.transaction_reference
 																				and b.state_code IS NOT NULL)
-								where a.name = %s''',si_doc.name)
-
-		frappe.db.sql('''update `tabSales Invoice` a set a.place_of_supply = (select max(b.state_code)
-																				from `tabBilling Details B2C` b
-																				where b.reference_payment_order = a.reference_payment_order
-																				and b.state_code IS NOT NULL
-																				and b.invoice_number IS NULL)
 								where a.name = %s''',si_doc.name)
 
 def create_jv():
