@@ -124,7 +124,7 @@ def create_sales_b2c():
 									where name not in 
 									(select transaction_reference
 									from `tabSales Invoice` 
-									where legacy_invoice_no is not NULL)
+									where transaction_reference is not NULL)
 								''',as_dict=1)
 
 	for invoice in invoices:
