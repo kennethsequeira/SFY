@@ -145,7 +145,11 @@ def create_sales_b2c():
 		si_doc.customer_gstin = invoice["customer_gstin"]
 		si_doc.reference_payment_order = invoice["reference_payment_order"]
 		si_doc.transaction_reference = invoice["name"]
-		si_doc.naming_series = "SFY/18-19/E.########"
+		if invoice["base_value"] < 0:
+			si_doc.naming_series = "SFY/CN/18-19/E.########"
+		else:
+			si_doc.naming_series = "SFY/18-19/E.########"
+
 		#logic for this
 		if invoice["cgst_amount"] > 0 or invoice["sgst_amount"] > 0:
 			si_doc.taxes_and_charges = "In State GST - SLTPL"
@@ -155,7 +159,6 @@ def create_sales_b2c():
 		si_doc.legacy_invoice_no = invoice["invoice_number"]
 
 		if invoice["base_value"] < 0:
-			si_doc.naming_series = "SFY/CN/18-19/E.########"
 			qty = -1
 			invoice["base_value"] = invoice["base_value"] * -1
 			si_doc.is_return = 1
