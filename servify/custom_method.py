@@ -243,7 +243,7 @@ def create_jv():
 		je_doc.cheque_date = je["posting_date"]
 
 		je_details = frappe.db.sql('''select 
-								 			account, debit, credit, party, party_name, 
+								 			ledger, debit, credit, party, party_name, 
 											CONCAT(ifnull(reference, " "), "/", ifnull(narration, " "), "/", ifnull(item, " ")) as "remark" 
 									from
 										`tabServify Ledger`
@@ -257,8 +257,11 @@ def create_jv():
 			else:
 				cost_center = ""
 
+			if jed["account"] in ["03001001", "03001002", "03001003", "03001004"]:
+				cost_center = "Corporate - SLTPL"
+
 			je_doc.append("accounts", {
-				"account": jed["account"],
+				"account": jed["ledger"],
 				"cost_center": cost_center,
 				"party_type": jed["party"],
 				"party": jed["party_name"],
@@ -269,8 +272,12 @@ def create_jv():
 				"user_remark": jed["remark"]
 			})
 
-		if je["legacy_voucher"]:
-			je_doc.insert(ignore_permissions=True)
+		try:
+			if je["legacy_voucher"]:
+				je_doc.insert(ignore_permissions=True)
+
+		except Exception as e:
+			frappe.log_error(message=e, title="JV Error")
 
 def submit_si():
 	invoices = frappe.db.sql('''select name
