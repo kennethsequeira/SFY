@@ -337,9 +337,3 @@ def validate_unique_sold_plan_id(self, method):
 
 	if self.sfy_place_of_supply:
 		self.place_of_supply = self.sfy_place_of_supply
-
-def update_state_code(self, method):
-	if self.sfy_place_of_supply:
-		frappe.throw(_("tesT"))
-		frappe.db.sql('''update `tabSales Invoice` a set a.place_of_supply = %s
-								where a.name = %s''', (self.sfy_place_of_supply, self.name))
