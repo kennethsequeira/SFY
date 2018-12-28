@@ -334,3 +334,8 @@ def validate_unique_sold_plan_id(self, method):
 			if si:
 				si = si[0][0]
 				frappe.throw(_("Sold Plan ID {0} already exists in Sales Invoice {1}".format(d.sold_plan_id, si)))
+
+def update_state_code(self, method):
+	if not self.place_of_supply:
+		if self.sfy_place_of_supply:
+			self.place_of_supply = self.sfy_place_of_supply
