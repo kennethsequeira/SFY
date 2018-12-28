@@ -79,9 +79,7 @@ app_license = "MIT"
 # ---------------
 doc_events = {
 	"Sales Invoice": {
-		"validate": "servify.custom_method.validate_unique_sold_plan_id",
-		"after_insert": "servify.custom_method.update_state_code",
-		"on_submit": "servify.custom_method.update_state_code"
+		"validate": "servify.custom_method.validate_unique_sold_plan_id"
 		}
 	}
 # Hook on document methods and events

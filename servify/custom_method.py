@@ -335,7 +335,11 @@ def validate_unique_sold_plan_id(self, method):
 				si = si[0][0]
 				frappe.throw(_("Sold Plan ID {0} already exists in Sales Invoice {1}".format(d.sold_plan_id, si)))
 
+	if self.sfy_place_of_supply:
+		self.place_of_supply = self.sfy_place_of_supply
+
 def update_state_code(self, method):
 	if self.sfy_place_of_supply:
+		frappe.throw(_("tesT"))
 		frappe.db.sql('''update `tabSales Invoice` a set a.place_of_supply = %s
 								where a.name = %s''', (self.sfy_place_of_supply, self.name))
