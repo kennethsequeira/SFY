@@ -243,7 +243,7 @@ def create_jv():
 		je_doc.cheque_date = je["posting_date"]
 
 		je_details = frappe.db.sql('''select 
-								 			ledger, debit, credit, party, party_name, 
+								 			ledger, debit, credit, customer, supplier, employee, shareholder
 											CONCAT(ifnull(reference, " "), "/", ifnull(narration, " "), "/", ifnull(item, " ")) as "remark" 
 									from
 										`tabServify Ledger`
@@ -252,19 +252,35 @@ def create_jv():
 									order by legacy_voucher asc''', (je["legacy_voucher"], je["posting_date"]), as_dict = 1)
 
 		for jed in je_details:
-			if jed["account"][:2] in ["01","02", "03"]:
+			if jed["ledger"][:2] in ["01","02", "03"]:
 				cost_center = "Main - SLTPL"
 			else:
 				cost_center = ""
 
-			if jed["account"] in ["03001001", "03001002", "03001003", "03001004"]:
+			if jed["ledger"] in ["03001001", "03001002", "03001003", "03001004"]:
 				cost_center = "Corporate - SLTPL"
+
+			if jed["customer"]:
+				party = "Customer"
+				party_name = jed["customer"]
+
+			if jed["supplier"]:
+				party = "Supplier"
+				party_name = jed["supplier"]
+
+			if jed["employee"]:
+				party = "Employee"
+				party_name = jed["employee"]
+
+			if jed["shareholder"]:
+				party = "Shareholder"
+				party_name = jed["shareholder"]
 
 			je_doc.append("accounts", {
 				"account": jed["ledger"],
 				"cost_center": cost_center,
-				"party_type": jed["party"],
-				"party": jed["party_name"],
+				"party_type": party,
+				"party": party_name,
 				"debit_in_account_currency": jed["debit"],
 				"debit":jed["debit"],
 				"credit_in_account_currency":jed["credit"],
