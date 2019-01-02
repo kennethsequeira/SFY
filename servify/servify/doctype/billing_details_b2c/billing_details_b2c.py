@@ -12,7 +12,7 @@ class BillingDetailsB2C(Document):
 		if self.is_deferred and not (self.start_date and self.end_date):
 			frappe.throw(_("Start Date and End Date is required for deferred processing"))
 
-		if not self.sold_plan_id or not self.service_request_id:
+		if not self.sold_plan_id and not self.service_request_id:
 			frappe.throw(_("Sold Plan ID or Service Request ID is mandatory for processing"))
 
 		if not self.base_value or not self.total:
