@@ -15,7 +15,7 @@ class BillingDetailsB2C(Document):
 		if not self.sold_plan_id and not self.service_request_id:
 			frappe.throw(_("Sold Plan ID or Service Request ID is mandatory for processing"))
 
-		if not self.base_value or not self.total:
+		if (not self.base_value and self.base_value != 0.0) or (not self.total and self.total != 0.0):
 			frappe.throw(_("Base value and total are mandatory"))
 
 		if self.base_value > 0.0 and self.sold_plan_id:
