@@ -234,6 +234,8 @@ def create_jv():
 							`tabServify Ledger`
 						order by legacy_voucher, posting_date asc''', as_dict = 1)
 
+	count = 0
+
 	for je in jes:
 		je_doc = frappe.new_doc("Journal Entry")
 		je_doc.company = "Service Lee Technologies Pvt Ltd"
@@ -292,8 +294,9 @@ def create_jv():
 			if je["legacy_voucher"]:
 				je_doc.insert(ignore_permissions=True)
 
+
 		except Exception as e:
-			frappe.log_error(message=e, title="JV Error")
+			frappe.log_error(message=e, title="JV Error" + je["legacy_voucher"] + je["posting_date"])
 
 def submit_si():
 	invoices = frappe.db.sql('''select name

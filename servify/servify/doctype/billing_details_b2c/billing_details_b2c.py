@@ -12,6 +12,9 @@ class BillingDetailsB2C(Document):
 		if self.is_deferred and not (self.start_date and self.end_date):
 			frappe.throw(_("Start Date and End Date is required for deferred processing"))
 
+		if not self.base_value or not self.total:
+			frappe.throw(_("Base value and total are mandatory"))
+
 		if self.base_value > 0 and self.sold_plan_id:
 			invoices = frappe.db.sql('''select sold_plan_id, name
 											from `tabBilling Details B2C`
