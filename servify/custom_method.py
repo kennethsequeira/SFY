@@ -145,6 +145,7 @@ def create_sales_b2c():
 		si_doc.customer_gstin = invoice["customer_gstin"]
 		si_doc.reference_payment_order = invoice["reference_payment_order"]
 		si_doc.transaction_reference = invoice["name"]
+		si_doc.sfy_place_of_supply = invoice["state_code"]
 		if invoice["base_value"] < 0:
 			si_doc.naming_series = "SFY/CN/18-19/E.########"
 		else:
@@ -219,13 +220,6 @@ def create_sales_b2c():
 
 		except Exception as e:
 			frappe.log_error(message=e, title="Create Sales Invoice B2C")
-
-
-		frappe.db.sql('''update `tabSales Invoice` a set a.place_of_supply = (select max(b.state_code)
-																				from `tabBilling Details B2C` b
-																				where b.name = a.transaction_reference
-																				and b.state_code IS NOT NULL)
-								where a.name = %s''',si_doc.name)
 
 def create_jv():
 	jes = frappe.db.sql('''select 

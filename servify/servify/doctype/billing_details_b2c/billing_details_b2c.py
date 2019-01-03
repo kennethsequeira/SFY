@@ -34,9 +34,6 @@ class BillingDetailsB2C(Document):
 		else:
 			frappe.throw(_("Invoice Number or Reference Payment Order is mandatory to upload transactions"))
 
-		if not self.state_code:
-			frappe.throw(_("State Code is mandatory to upload transactions"))
-
 		si = frappe.db.sql('''select distinct b.parent
 								from `tabSales Invoice` a, `tabSales Invoice Item` b
 							where
