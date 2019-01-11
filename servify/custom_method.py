@@ -7,7 +7,8 @@ from frappe import _
 def create_sales_b2b():
 	invoices = frappe.db.sql('''select name, posting_date, customer, customer_name,
 		 							customer_address, taxes_and_charges,
-									customer_gstin, billing_address_gstin, place_of_supply
+									customer_gstin, billing_address_gstin, place_of_supply,
+									project
 									from `tabBilling Customer`
 									where sales_invoice not in 
 									(select legacy_invoice_no 
@@ -27,9 +28,11 @@ def create_sales_b2b():
 		si_doc.shipping_address_name = invoice["customer_address"]
 		si_doc.customer_gstin = invoice["customer_gstin"]
 		si_doc.billing_address_gstin = invoice["billing_address_gstin"]
-		si_doc.place_of_supply = invoice["place_of_supply"]
+		si_doc.sfy_place_of_supply = invoice["place_of_supply"]
 		si_doc.company_address = "Service Lee Technologies Pvt Ltd-Billing"
 		si_doc.company_gstin = "27AAVCS8563N1Z4"
+		si_doc.project = invoice["project"]
+		si_doc.legacy_invoice_no = invoice["sales_invoice"]
 		#set template
 		if invoice["taxes_and_charges"] in ["Out of State GST @ 18%","Out of State GST - 12%"]:
 			si_doc.taxes_and_charges = "Out of State GST - SLTPL"
@@ -39,7 +42,7 @@ def create_sales_b2b():
 		si_doc.legacy_invoice_no = invoice["name"]
 		invoice_details = frappe.db.sql('''select sold_plan_id, plan_id, 
 										start_date, end_date,
-										base_value, project
+										base_value, cost_center
 										from `tabBilling Details`
 										where sales_invoice = %s''',invoice["name"],
 										as_dict=1)
@@ -59,9 +62,9 @@ def create_sales_b2b():
 				"sold_plan_id": detail["sold_plan_id"],
 				"enable_deferred_revenue": 1,
 				"service_start_date": detail["start_date"],
-				"service_end_date": detail["end_date"]
+				"service_end_date": detail["end_date"],
+				"cost_center": detail["cost_center"]
 			})
-			si_doc.project = detail["project"]
 			details_exist = True
 			
 		if invoice["taxes_and_charges"] == "In State GST @ 18%":
@@ -110,8 +113,14 @@ def create_sales_b2b():
 
 		si_doc.set_missing_values()
 		si_doc.flags.ignore_mandatory = True
-		if details_exist:
-			si_doc.insert(ignore_permissions=True)
+
+		try:
+			if details_exist:
+				si_doc.insert(ignore_permissions=True)
+
+		except Exception as e:
+			error_string = "B2B Sales" + invoice["sales_invoice"]
+			frappe.log_error(message = e, title = error_string)
 
 def create_sales_b2c():
 	invoices = frappe.db.sql('''select sold_plan_id, plan_id, customer_name, customer_address,
