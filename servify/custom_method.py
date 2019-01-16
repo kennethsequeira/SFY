@@ -42,7 +42,7 @@ def create_sales_b2b():
 		si_doc.legacy_invoice_no = invoice["name"]
 		invoice_details = frappe.db.sql('''select sold_plan_id, plan_id, 
 										start_date, end_date,
-										base_value, cost_center
+										base_value, cost_center, is_deferred
 										from `tabBilling Details`
 										where sales_invoice = %s''',invoice["name"],
 										as_dict=1)
@@ -60,7 +60,7 @@ def create_sales_b2b():
 				"qty": qty,
 				"rate": detail["base_value"],
 				"sold_plan_id": detail["sold_plan_id"],
-				"enable_deferred_revenue": 1,
+				"enable_deferred_revenue": detail["is_deferred"],
 				"service_start_date": detail["start_date"],
 				"service_end_date": detail["end_date"],
 				"cost_center": detail["cost_center"]
