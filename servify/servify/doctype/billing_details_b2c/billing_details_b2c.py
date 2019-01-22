@@ -18,23 +18,28 @@ class BillingDetailsB2C(Document):
 		if (not self.base_value and self.base_value != 0.0) or (not self.total and self.total != 0.0):
 			frappe.throw(_("Base value and total are mandatory"))
 
-		if self.base_value > 0.0 and self.sold_plan_id:
-			invoices = frappe.db.sql('''select sold_plan_id, name
+		base_amt_1 = self.base_value + 1
+		base_amt_2 = base_amt_1 - 1
+		if base_amt_2 > 0:
+			if self.sold_plan_id:
+				invoices = frappe.db.sql('''select sold_plan_id, name
 											from `tabBilling Details B2C`
 											where sold_plan_id = %s
 											and name != %s
 											and base_value > 0
 										''', (self.sold_plan_id, self.name) , as_dict=1)
-			for invoice in invoices:
-				if invoice["sold_plan_id"]:
-					frappe.throw(_("Sold Plan ID {0} already exists for record {1}".format(invoice["sold_plan_id"], invoice["name"])))
+				for invoice in invoices:
+					if invoice["sold_plan_id"]:
+						frappe.throw(_("Sold Plan ID {0} already exists for record {1}".format(invoice["sold_plan_id"], invoice["name"])))
 
 		if self.reference_payment_order or self.invoice_number:
 			pass
 		else:
 			frappe.throw(_("Invoice Number or Reference Payment Order is mandatory to upload transactions"))
 
-		si = frappe.db.sql('''select distinct b.parent
+		if base_amt_2 > 0:
+			if self.sold_plan_id:
+				si = frappe.db.sql('''select distinct b.parent
 								from `tabSales Invoice` a, `tabSales Invoice Item` b
 							where
 								a.name = b.parent
@@ -43,6 +48,6 @@ class BillingDetailsB2C(Document):
 								and a.docstatus < 2''', {
 									"sold_plan_id": self.sold_plan_id
 								})
-		if si:
-			si = si[0][0]
-			frappe.throw(_("Sold Plan ID {0} already exists in Sales Invoice {1}".format(self.sold_plan_id, si)))
+			if si:
+				si = si[0][0]
+				frappe.throw(_("Sold Plan ID {0} already exists in Sales Invoice {1}".format(self.sold_plan_id, si)))
