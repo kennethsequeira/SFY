@@ -50,7 +50,7 @@ def create_sales_b2b():
 		for detail in invoice_details:
 			if detail["base_value"] < 0:
 				qty = -1
-				detail["base_value"] = invoice["base_value"] * -1
+				detail["base_value"] = detail["base_value"] * -1
 				si_doc.is_return = 1
 			else:
 				qty = 1
@@ -341,22 +341,23 @@ def validate_unique_sold_plan_id(self, method):
 	#default letter head for Sales Invoice
 	if not self.letter_head:
 		self.letter_head = "Service Lee Technologies Pvt Ltd"
-	for d in self.items:
-		if d.sold_plan_id and d.qty > 0:
-			si = frappe.db.sql('''select distinct b.parent
-									from `tabSales Invoice` a, `tabSales Invoice Item` b
-								where
-									a.name = b.parent
-									and b.sold_plan_id = %(sold_plan_id)s
-									and a.name != %(parent)s
-									and a.is_return = 0
-									and a.docstatus < 2''', {
-										"sold_plan_id": d.sold_plan_id,
-										"parent": d.parent
-									})
-			if si:
-				si = si[0][0]
-				frappe.throw(_("Sold Plan ID {0} already exists in Sales Invoice {1}".format(d.sold_plan_id, si)))
+	if not self.sfy_is_repair:
+		for d in self.items:
+			if d.sold_plan_id and d.qty > 0:
+				si = frappe.db.sql('''select distinct b.parent
+										from `tabSales Invoice` a, `tabSales Invoice Item` b
+									where
+										a.name = b.parent
+										and b.sold_plan_id = %(sold_plan_id)s
+										and a.name != %(parent)s
+										and a.is_return = 0
+										and a.docstatus < 2''', {
+											"sold_plan_id": d.sold_plan_id,
+											"parent": d.parent
+										})
+				if si:
+					si = si[0][0]
+					frappe.throw(_("Sold Plan ID {0} already exists in Sales Invoice {1}".format(d.sold_plan_id, si)))
 
 	if self.sfy_place_of_supply:
 		self.place_of_supply = self.sfy_place_of_supply
