@@ -361,3 +361,13 @@ def validate_unique_sold_plan_id(self, method):
 
 	if self.sfy_place_of_supply:
 		self.place_of_supply = self.sfy_place_of_supply
+
+def default_manager_name(self, method):
+	if self.reports_to:
+		reports_to_name = frappe.db.sql('''select 
+												employee_name
+											from
+												`tabEmployee`
+											where name = %s''', self.reports_to)
+		if reports_to_name:
+			self.sfy_reports_to_name = reports_to_name[0][0]

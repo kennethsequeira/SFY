@@ -80,6 +80,9 @@ app_license = "MIT"
 doc_events = {
 	"Sales Invoice": {
 		"validate": "servify.custom_method.validate_unique_sold_plan_id"
+		},
+	"Employee": {
+		"validate": "servify.custom_method.default_manager_name"
 		}
 	}
 # Hook on document methods and events
