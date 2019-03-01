@@ -180,7 +180,6 @@ def create_sales_b2c():
 				"qty": qty,
 				"rate": invoice["base_value"],
 				"sold_plan_id": invoice["sold_plan_id"],
-				"enable_deferred_revenue": 1,
 				"service_start_date": invoice["start_date"],
 				"service_end_date": invoice["end_date"],
 				"reference_payment_order": invoice["reference_payment_order"],
