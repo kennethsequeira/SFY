@@ -364,9 +364,10 @@ def validate_unique_sold_plan_id(self, method):
 def default_manager_name(self, method):
 	if self.reports_to:
 		reports_to_name = frappe.db.sql('''select 
-												employee_name
+												employee_name, company_email
 											from
 												`tabEmployee`
 											where name = %s''', self.reports_to)
 		if reports_to_name:
 			self.sfy_reports_to_name = reports_to_name[0][0]
+			self.sfy_report_to_email = reports_to_name[0][1]
