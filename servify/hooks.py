@@ -83,6 +83,9 @@ doc_events = {
 		},
 	"Employee": {
 		"validate": "servify.custom_method.default_manager_name"
+		},
+	"Goal Setting Template" : {
+		"validate": "servify.custom_method.validate_weights"
 		}
 	}
 # Hook on document methods and events

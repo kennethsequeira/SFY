@@ -371,3 +371,19 @@ def default_manager_name(self, method):
 		if reports_to_name:
 			self.sfy_reports_to_name = reports_to_name[0][0]
 			self.sfy_report_to_email = reports_to_name[0][1]
+
+def validate_weights(self, method):
+	kra_weight = 0
+	beh_kra_weight = 0
+
+	for kra in self.kra
+		kra_weight += kra.weightage
+
+	for beh_kra in self.behavioral_assesment
+		beh_kra_weight += beh_kra.weightage
+
+	if kra_weight != 100:
+		frappe.throw(_("Sum of KRA weights should be 100"))
+
+	if beh_kra_weight != 100:
+		frappe.throw(_("Sum of Behavioral KRA weights should be 100"))
