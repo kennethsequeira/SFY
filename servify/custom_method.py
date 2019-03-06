@@ -376,10 +376,10 @@ def validate_weights(self, method):
 	kra_weight = 0
 	beh_kra_weight = 0
 
-	for kra in self.kra
+	for kra in self.kra:
 		kra_weight += kra.weightage
 
-	for beh_kra in self.behavioral_assesment
+	for beh_kra in self.behavioral_assesment:
 		beh_kra_weight += beh_kra.weightage
 
 	if kra_weight != 100:
