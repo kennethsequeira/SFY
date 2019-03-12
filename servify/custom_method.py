@@ -223,7 +223,7 @@ def create_sales_b2c():
 		si_doc.flags.ignore_mandatory = True
 
 		try:
-			if invoice["plan_id"]:
+			if invoice["plan_id"] or invoice["service_request_id"]:
 				si_doc.insert(ignore_permissions=True)
 
 		except Exception as e:
