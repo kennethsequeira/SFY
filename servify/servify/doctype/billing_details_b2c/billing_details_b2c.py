@@ -48,6 +48,6 @@ class BillingDetailsB2C(Document):
 								and a.docstatus < 2''', {
 									"sold_plan_id": self.sold_plan_id
 								})
-			if si:
-				si = si[0][0]
-				frappe.throw(_("Sold Plan ID {0} already exists in Sales Invoice {1}".format(self.sold_plan_id, si)))
+				if si:
+					si = si[0][0]
+					frappe.throw(_("Sold Plan ID {0} already exists in Sales Invoice {1}".format(self.sold_plan_id, si)))
