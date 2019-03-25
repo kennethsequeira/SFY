@@ -3,6 +3,7 @@ import frappe
 import frappe.defaults
 from frappe.utils import cint, flt, add_months, today, date_diff, getdate, add_days, cstr
 from frappe import _
+from frappe.model.mapper import get_mapped_doc
 
 def create_sales_b2b():
 	invoices = frappe.db.sql('''select name, posting_date, customer, customer_name,
