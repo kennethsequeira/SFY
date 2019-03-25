@@ -387,3 +387,23 @@ def validate_weights(self, method):
 
 	if beh_kra_weight != 100:
 		frappe.throw(_("Sum of Behavioral KRA weights should be 100"))
+
+@frappe.whitelist()
+def make_appraisal(source_name, target_doc=None):
+	def set_missing_values(source, target):
+		target.goal_setting_ref = source.name
+		target.naming_series = "ACC-APPRAISAL-.YYYY.-"
+
+	doclist = get_mapped_doc("Goal Setting Template", source_name,{
+				"Goal Setting Template": {
+					"doctype": "Servify Appraisal",
+				},
+				"Goal Setting KRA": {
+					"doctype": "Appraisal KRA"
+				},
+				"Goal Setting Behavioral": {
+					"doctype": "Appraisal Behavioral"
+				}
+		}, target_doc, set_missing_values)
+
+	return doclist
