@@ -395,8 +395,8 @@ def validate_weights(self, method):
 														`tabEmployee`
 													where name = %s''', employee_defaults[0][4])
 				if reports_to_email:
-					self.manager = reports_to_email[0][0]
-					self.manager_email = reports_to_email[0][1]
+					self.manager = employee_defaults[0][4]
+					self.manager_email = reports_to_email[0][0]
 
 			if employee_defaults[0][2]:
 				department_appraiser = frappe.db.sql('''select 
