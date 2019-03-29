@@ -374,6 +374,38 @@ def default_manager_name(self, method):
 			self.sfy_report_to_email = reports_to_name[0][1]
 
 def validate_weights(self, method):
+	#Default information based on employee ID
+	if self.employee
+		employee_defaults = frappe.db.sql('''select 
+													employee_name, company_email, department, branch, reports_to
+												from
+													`tabEmployee`
+												where name = %s''', self.employee)
+
+		if employee_defaults:
+			self.full_name = employee_defaults[0][0]
+			self.employee_email = employee_defaults[0][1]
+			self.department = employee_defaults[0][2]
+			self.branch = employee_defaults[0][3]
+
+			if employee_defaults[0][4]:
+				reports_to_email = frappe.db.sql('''select 
+														company_email
+													from
+														`tabEmployee`
+													where name = %s''', employee_defaults[0][4])
+				if reports_to_email:
+					self.manager = reports_to_email[0][0]
+					self.manager_email = reports_to_email[0][1]
+
+			if employee_defaults[0][2]:
+				department_appraiser = frappe.db.sql('''select 
+															appraisal_approver
+														from
+															`tabDepartment`
+														where name = %s''', employee_defaults[0][2])
+				self.department_head_email = department_appraiser[0][0]
+	#validate weights
 	kra_weight = 0
 	beh_kra_weight = 0
 
@@ -387,7 +419,7 @@ def validate_weights(self, method):
 		frappe.throw(_("Sum of KRA weights should be 100"))
 
 	if beh_kra_weight != 100:
-		frappe.throw(_("Sum of Behavioral KRA weights should be 100"))
+		frappe.throw(_("Sum of Behavioral KRA weights should be 100"))	
 
 @frappe.whitelist()
 def make_appraisal(source_name, target_doc=None):
