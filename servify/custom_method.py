@@ -375,7 +375,7 @@ def default_manager_name(self, method):
 
 def validate_weights(self, method):
 	#Default information based on employee ID
-	if self.employee
+	if self.employee:
 		employee_defaults = frappe.db.sql('''select 
 													employee_name, company_email, department, branch, reports_to
 												from
