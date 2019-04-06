@@ -373,7 +373,7 @@ def default_manager_name(self, method):
 			self.sfy_reports_to_name = reports_to_name[0][0]
 			self.sfy_report_to_email = reports_to_name[0][1]
 
-def validate_weights(self, method):
+def validate_goal_setting(self, method):
 	#Default information based on employee ID
 	if self.employee:
 		employee_defaults = frappe.db.sql('''select 
@@ -420,6 +420,66 @@ def validate_weights(self, method):
 
 	if beh_kra_weight != 100:
 		frappe.throw(_("Sum of Behavioral KRA weights should be 100"))	
+
+def validate_appraisal(self, method):
+	#validate make appraisal from goal setting
+	if not self.quarter:
+		frappe.throw(_("Please select the quarter for which you want to make appraisal for"))
+
+	if self.goal_setting_ref:
+		#validate quarterly only one
+		appraisal = frappe.db.sql('''select 
+									count(name)
+								from 
+									`tabServify Appraisal`
+								where 
+									employee = %s 
+									and goal_setting_ref = %s 
+									and quarter =  %s
+									and name != %s
+									and (docstatus = 1 or docstatus = 0)''',(self.employee, self.goal_setting_ref, self.quarter, self.name))
+		if appraisal:
+			frappe.throw(_("Appraisal {0} already exists for the quarter {1} and Goal Setting {2}".format(appraisal[0][0], self.quarter, self.goal_setting_ref)))
+	else:
+		frappe.throw(_("Appraisal needs to be made from Goal Setting Document"))
+	#validate weights
+	kra_weight = 0
+	beh_kra_weight = 0
+	
+	for kra in self.kra:
+		kra_weight += kra.weightage
+
+	for beh_kra in self.behavioral_assesment:
+		beh_kra_weight += beh_kra.weightage
+
+	if kra_weight != 100:
+		frappe.throw(_("Sum of KRA weights should be 100"))
+
+	if beh_kra_weight != 100:
+		frappe.throw(_("Sum of Behavioral KRA weights should be 100"))
+	#calculate weighted average
+	kra_score_earned = 0
+	for d in self.get('kra'):
+		if d.man_rating:
+			kra_score_earned += flt(d.man_rating) * flt(d.weightage) / 100
+
+	if kra_score_earned > 0:
+		self.overall_kra_rating = kra_score_earned
+	
+	beh_score_earned = 0
+	for d in self.get('behavioral_assesment'):
+		if d.man_rating:
+			beh_score_earned += flt(d.man_rating) * flt(d.weightage) / 100
+
+	if beh_score_earned > 0:
+		self.overall_beh_rating = beh_score_earned
+
+	#get weightage
+	kra_weightage = frappe.db.get_single_value('Serivfy HR Settings', 'sfy_kra_weightage')
+	beh_weightage = frappe.db.get_single_value('Servify HR Settings', 'sfy_beh_weightage')
+
+	if (self.overall_kra_rating + self.overall_beh_rating) > 0:
+		self.overall_rating = (flt(self.overall_kra_rating) * flt(kra_weightage) / 100) + (flt(self.overall_beh_rating) * flt(beh_weightage) / 100)
 
 @frappe.whitelist()
 def make_appraisal(source_name, target_doc=None):
