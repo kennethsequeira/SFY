@@ -475,8 +475,10 @@ def validate_appraisal(self, method):
 		self.overall_beh_rating = beh_score_earned
 
 	#get weightage
-	kra_weightage = frappe.db.get_single_value('Serivfy HR Settings', 'sfy_kra_weightage')
-	beh_weightage = frappe.db.get_single_value('Servify HR Settings', 'sfy_beh_weightage')
+	kra_weightage = 0
+	kra_weightage = frappe.db.get_single_value('Servify HR Settings', 'sfy_kra_weightage')
+	beh_weightage = 0
+	beh_weightage = 100 - flt(kra_weightage)
 
 	if (self.overall_kra_rating + self.overall_beh_rating) > 0:
 		self.overall_rating = (flt(self.overall_kra_rating) * flt(kra_weightage) / 100) + (flt(self.overall_beh_rating) * flt(beh_weightage) / 100)
