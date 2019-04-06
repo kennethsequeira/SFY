@@ -428,8 +428,7 @@ def validate_appraisal(self, method):
 
 	if self.goal_setting_ref:
 		#validate quarterly only one
-		appraisal = frappe.db.sql('''select 
-									count(name)
+		appraisal = frappe.db.sql('''select name
 								from 
 									`tabServify Appraisal`
 								where 
@@ -437,7 +436,8 @@ def validate_appraisal(self, method):
 									and goal_setting_ref = %s 
 									and quarter =  %s
 									and name != %s
-									and (docstatus = 1 or docstatus = 0)''',(self.employee, self.goal_setting_ref, self.quarter, self.name))
+									and (docstatus = 1 or docstatus = 0)''',
+									(self.employee, self.goal_setting_ref, self.quarter, self.name))
 		if appraisal:
 			frappe.throw(_("Appraisal {0} already exists for the quarter {1} and Goal Setting {2}".format(appraisal[0][0], self.quarter, self.goal_setting_ref)))
 	else:
