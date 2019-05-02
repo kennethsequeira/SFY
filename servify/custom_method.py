@@ -351,6 +351,7 @@ def validate_unique_sold_plan_id(self, method):
 										and b.sold_plan_id = %(sold_plan_id)s
 										and a.name != %(parent)s
 										and a.is_return = 0
+										and a.sfy_is_repair = 0
 										and a.docstatus < 2''', {
 											"sold_plan_id": d.sold_plan_id,
 											"parent": d.parent
