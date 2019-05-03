@@ -411,6 +411,8 @@ def validate_goal_setting(self, method):
 	beh_kra_weight = 0
 
 	for kra in self.kra:
+		if flt(kra.weightage) < 5 or flt(kra.weightage) > 30:
+			frappe.throw(_("KRA weights should be between 5 and 30"))
 		kra_weight += kra.weightage
 
 	for beh_kra in self.behavioral_assesment:
@@ -448,7 +450,7 @@ def validate_appraisal(self, method):
 	beh_kra_weight = 0
 	
 	for kra in self.kra:
-		if kra.weightage < 5 or kra.weightage > 30:
+		if flt(kra.weightage) < 5 or flt(kra.weightage) > 30:
 			frappe.throw(_("KRA weights should be between 5 and 30"))
 		kra_weight += kra.weightage
 
