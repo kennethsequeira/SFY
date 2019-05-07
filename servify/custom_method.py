@@ -406,6 +406,8 @@ def validate_goal_setting(self, method):
 															`tabDepartment`
 														where name = %s''', employee_defaults[0][2])
 				self.department_head_email = department_appraiser[0][0]
+				if "Servify Dept Head" in frappe.get_roles(frappe.session.user):
+					self.department_head_email = 'sree@servify.tech'
 	#validate weights
 	kra_weight = 0
 	beh_kra_weight = 0
